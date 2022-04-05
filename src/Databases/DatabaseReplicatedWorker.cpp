@@ -87,7 +87,7 @@ bool DatabaseReplicatedDDLWorker::waitForReplicaToProcessAllEntries(UInt64 timeo
 
     /// max_log_ptr is the number of the last successfully executed request on the initiator
     /// The log could contain other entries which are not committed yet
-    /// This equality is enough to say that current replicas is up-to-date
+    /// This equality is enough to say that current replica is up-to-date
     if (our_log_ptr == max_log_ptr)
         return true;
 
