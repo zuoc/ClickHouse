@@ -5,6 +5,19 @@
 #include <Core/Types.h>
 #include <DataTypes/DataTypesDecimal.h>
 
+namespace DB
+{
+namespace ErrorCodes
+{
+    extern const int LOGICAL_ERROR;
+    extern const int UNKNOWN_TYPE;
+    extern const int ILLEGAL_TYPE_OF_ARGUMENT;
+    extern const int BAD_ARGUMENTS;
+    extern const int NO_SUCH_DATA_PART;
+    extern const int UNKNOWN_FUNCTION;
+}
+}
+
 #define WRITE_VECTOR_COLUMN(TYPE, PRIME_TYPE, GETTER) \
     const auto * type_col = checkAndGetColumn<ColumnVector<TYPE>>(*col.column); \
     for (auto i = 0; i < num_rows; i++) \
@@ -117,7 +130,11 @@ void writeValue(
     }
     else if (which.isUInt16())
     {
-        WRITE_VECTOR_COLUMN(UInt16, uint16_t , get64)
+        WRITE_VECTOR_COLUMN(UInt16, uint16_t, get64)
+    }
+    else if (which.isUInt64())
+    {
+        WRITE_VECTOR_COLUMN(UInt64, uint64_t, get64)
     }
     else if (which.isInt32())
     {
@@ -163,7 +180,7 @@ void writeValue(
     }
     else
     {
-        throw std::runtime_error("doesn't support type " + String(magic_enum::enum_name(nested_col->getDataType())));
+        throw Exception(ErrorCodes::UNKNOWN_TYPE, "3-doesn't support type {}", String(magic_enum::enum_name(nested_col->getDataType())));
     }
 }
 
